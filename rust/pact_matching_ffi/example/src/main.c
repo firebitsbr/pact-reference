@@ -1,5 +1,5 @@
 
-#include "pact_matching.h"
+#include "../include/pact_matching.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -28,7 +28,7 @@ int main(void) {
         \"providerState\": \"provider state\",\
         \"matchingRules\": {}\
     }";
-    Message *msg_json = message_from_json(0, json_str, PactSpecification_V3);
+    Message *msg_json = message_new_from_json(0, json_str, PactSpecification_V3);
 
     if (NULL == msg_json) {
         char error_msg[ERROR_MSG_LEN];

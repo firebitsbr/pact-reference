@@ -1,6 +1,8 @@
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
-#include "pact_matching_ffi.h"
+#include "../../include/pact_matching_ffi.h"
+
+using namespace pact_matching;
 
 TEST(LoggerTests, ApplyFail)
 {
@@ -16,13 +18,15 @@ TEST(LoggerTests, ApplyFail)
 TEST(LoggerTests, BadFileSpec)
 {
     logger_init();
-    int status = logger_attach_sink("/tmp/foo.log");
+    int status = logger_attach_sink("/tmp/foo.log",
+				    LevelFilter_Error);
     ASSERT_EQ(status, -4); // UnknownSinkType
 }
 
 TEST(LoggerTests, InvalidFile)
 {
     logger_init();
-    int status = logger_attach_sink("file /tmp?></foo.log");
+    int status = logger_attach_sink("file /tmp?></foo.log",
+				    LevelFilter_Error);
     ASSERT_EQ(status, -6);
 }

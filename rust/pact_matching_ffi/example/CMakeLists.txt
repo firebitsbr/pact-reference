@@ -17,12 +17,14 @@ endif()
 
 #################################################################################################
 # PROJECT DECLARATION
-#################################################################################################
-
+#############################################################
 project(C_EXAMPLE_1
         VERSION "0.1.0"
         DESCRIPTION "A basic example of a C consumer for the pact matching FFI"
-        LANGUAGES C)
+        LANGUAGES C CXX)
+set (CMAKE_CXX_STANDARD 11)
+enable_testing()
+
 
 #################################################################################################
 # OUT OF SOURCE BUILDS
@@ -30,6 +32,9 @@ project(C_EXAMPLE_1
 # Require out-of-source builds for this project. It keeps things much simpler
 # and cleaner.
 #################################################################################################
+
+INCLUDE(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+CONAN_BASIC_SETUP()
 
 # Set a path to the CMake config (this file)
 file(TO_CMAKE_PATH "${PROJECT_BINARY_DIR}/CMakeLists.txt" LOC_PATH)
@@ -68,11 +73,11 @@ endif()
 #################################################################################################
 
 # Sets the search path to the location of the package config
-get_filename_component(REAL_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/.." ABSOLUTE)
-set(SEARCH_PATH "${REAL_ROOT}/build/install/lib/cmake")
+#get_filename_component(REAL_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../.." ABSOLUTE)
+set(SEARCH_PATH "/ewalters/Documents/AirborneComm/pact-reference/rust/pact_matching_ffi/build")
 
 # Find the pact matching FFI package and load the imported target
-find_package(PactMatchingFfi REQUIRED CONFIG PATHS ${SEARCH_PATH})
+find_package(PactMatchingFFI REQUIRED CONFIG PATHS ${SEARCH_PATH})
 
 #################################################################################################
 # BUILD
@@ -80,6 +85,13 @@ find_package(PactMatchingFfi REQUIRED CONFIG PATHS ${SEARCH_PATH})
 
 # Define the executable
 add_executable(example src/main.c)
+add_executable(PactFFITests src/logger_tests.cpp src/message_tests.cpp)
+ADD_TEST(NAME stuff
+         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+         COMMAND ${PROJECT_NAME})
+
 
 # Link to pact matching FFI
-target_link_libraries(example PRIVATE PactMatchingFfi)
+target_link_libraries(example PRIVATE "/ewalters/Documents/AirborneComm/pact-reference/rust/lib/libpact_matching_ffi.so")
+target_link_libraries(PactFFITests PRIVATE "/ewalters/Documents/AirborneComm/pact-reference/rust/lib/libpact_matching_ffi.so")
+target_link_libraries(PactFFITests PRIVATE gtest)
